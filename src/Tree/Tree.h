@@ -2,6 +2,10 @@
 #define _TREE_H_
 
 #include <iostream>
+#include <queue>
+#include <algorithm>
+#include <functional>
+#include <vector>
 using namespace std;
 
 template< class Object>
@@ -143,6 +147,25 @@ public:
     void midOrder(){ midOrder(this->root); }
     void postOrder(){ postOrder(this->root); }
 
+    void levelOrder()
+    {
+        queue<BinaryNode *> que;
+        que.push(this->root);
+
+        while( !que.empty() )
+        {
+            BinaryNode * tmp = que.front();
+            cout<<tmp->data<<" ";
+            if( tmp->lchild  )
+                que.push( tmp->lchild );
+            if( tmp->rchild  )
+                que.push( tmp->rchild );
+            que.pop();
+        }
+
+        cout<<endl;
+    }
+
     void preOrder(BinaryNode *tree)
     {
         if( tree==NULL  )
@@ -183,6 +206,63 @@ public:
          }
 
          tree = NULL;
+    }
+
+    void getTree_PreMid(Object *pre, Object *mid, int len)
+    {
+        getTree_PreMid(this->root, pre, mid, len);
+    }
+
+    void getTree_PostMid(Object *post, Object *mid, int len)
+    {
+        getTree_PostMid(this->root, post, mid, len);
+    }
+
+    void getTree_PreMid(BinaryNode *&pn, const Object *pre, const Object *mid, int len)
+    {
+        if( len == 0 )
+            return;
+        pn = new BinaryNode(pre[0]);
+        for(int i=0; i<len; ++i)
+        {
+            if( mid[i] == pre[0] )
+            {
+                //next four line compare the ltree in mid-traversal and pre-traversal. when repeated element appear.
+                vector<Object> vp(pre+1, pre+1+i);
+                vector<Object> vm(mid, mid+i);
+                sort(vp.begin(), vp.end());
+                sort(vm.begin(), vm.end());
+                if( vp == vm )
+                {
+                    getTree_PreMid(pn->lchild, pre+1, mid, i);
+                    getTree_PreMid(pn->rchild, pre+1+i, mid+i+1, len-1-i);
+                    break;
+                }
+            }
+        }
+    }
+
+    void getTree_PostMid(BinaryNode *&pn, const Object *post, const Object *mid, int len)
+    {
+        if(len == 0)
+            return;
+        pn = new BinaryNode(post[len-1]);
+        for(int i=0; i<len; ++i)
+        {
+             if( mid[i] == post[len-1] )
+             {
+                vector<Object> vp(post, post+i);
+                vector<Object> vm(mid, mid+i);
+                sort(vp.begin(), vp.end());
+                sort(vm.begin(), vm.end());
+                if( vp == vm )
+                {
+                     getTree_PostMid(pn->lchild, post, mid, i);
+                     getTree_PostMid(pn->rchild, post+i, mid+i+1, len-i-1);
+                     break;
+                }
+             }
+        }
     }
 
 private:
