@@ -196,7 +196,7 @@ public:
          cout<<tree->data<<" ";
     }
 
-    void makaEmpty(BinaryNode * & tree)
+    void makeEmpty(BinaryNode * & tree)
     {
          if( tree != NULL)
          {
