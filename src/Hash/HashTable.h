@@ -10,9 +10,10 @@ template<class HashObject>
 class HashTable
 {
 public:
-    HashTable();
+    explicit HashTable(int size=100){}
     virtual ~HashTable();
     HashTable(const HashTable &rhs);
+    bool contains(const HashObject & obj) const
 
 private:
     vector< list<HashObject> > lists;

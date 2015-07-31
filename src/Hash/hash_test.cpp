@@ -2,8 +2,10 @@
 #include <algorithm>
 #include <functional>
 #include <iostream>
+#include <cstring>
 #include <tr1/unordered_map>
 #include <ctime>
+
 using namespace std::tr1;
 using namespace std;
 using namespace __gnu_cxx;
@@ -11,32 +13,61 @@ using namespace __gnu_cxx;
 template< class Func>
 void timer(Func func);
 
-template<class TMap>
-void insert_test(int size)
+class person
 {
-    TMap map;
-    clock_t begin, tval;
-    begin = clock();
-    for(int i=0; i<size; i++)
-        map.insert(make_pair(i,i));
-    tval = clock() - begin;
-    cout<<tval/1000000<<"s "<<(tval%1000000)/1000<<" ms"<<endl;
+public:
+    person(int age=18, char *name=NULL): age(age), name(name){}
 
-    begin = clock();
-    typename TMap::iterator iter = map.find(234567);
-    if( iter != map.end())
-        cout<<"find it"<<endl;
-    tval = clock() - begin;
-    cout<<tval/1000000<<"s "<<(tval%1000000)/1000<<" ms"<<endl;
-}
+    friend ostream & operator<< (ostream & os, const person & per)
+    {
+        os<<per.name<<" age "<<per.age;
+        return os;
+    }
+
+    bool operator==(const person &obj) const
+        {
+            return (this->age==obj.age) &&( 0== strcmp(this->name, obj.name) );
+    }
+
+    bool operator< (const person &obj)
+    {
+        return hash() < obj.hash();
+    }
+
+    int hash() const
+    {
+        return age;
+    }
+private:
+    int age;
+    char *name;
+    friend class MyHash;
+};
+
+class MyHash
+{
+public:
+    size_t operator()(const person &x) const
+    {
+        return x.age;
+    }
+};
 
 void test_hash_map()
 {
-    int size = 1024*3000;
-    unordered_map<int, int> um;
-    hash_map<int, int> hm;
-    insert_test<hash_map<int,int> >(size);
-    insert_test< unordered_map<int ,int> >(size);
+    unordered_map <person, const char *, MyHash> um;
+    char name1[] = "dhy";
+    char name2[] = "tx";
+    char name3[] = "fyw";
+    person dhy = person(28, name1);
+    person tx = person(24, name2);
+    person fyw = person(46, name3);
+
+    um.insert(make_pair(dhy, "tomato"));
+    um.insert(make_pair(tx, "potato"));
+    um.insert(make_pair(fyw, "carrot"));
+
+    cout<<fyw<<" like eat "<<um[fyw]<<endl;
 }
 
 int
