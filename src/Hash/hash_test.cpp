@@ -1,4 +1,3 @@
-#include <ext/hash_map>
 #include <algorithm>
 #include <functional>
 #include <iostream>
@@ -29,15 +28,16 @@ public:
             return (this->age==obj.age) &&( 0== strcmp(this->name, obj.name) );
     }
 
-    bool operator< (const person &obj)
+ /*   bool operator< (const person &obj)
     {
         return hash() < obj.hash();
     }
-
-    int hash() const
+*/
+ /*   int hash() const
     {
         return age;
     }
+    */
 private:
     int age;
     char *name;
