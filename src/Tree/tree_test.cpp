@@ -16,6 +16,12 @@ void tree_traversal(int *a, int n)
     tree.postOrder();
     cout<<endl;
     tree.levelOrder();
+    cout<<endl<<" after invert \n";
+    tree.invert_BinaryTree();
+    tree.levelOrder();
+    cout<<endl<<" after invert recursion again\n";
+    tree.invert_BinaryTree_Recur();
+    tree.levelOrder();
     cout<<endl;
 }
 
@@ -46,6 +52,7 @@ main()
 {
     int a[] = {3,1,4,2,5};
     tree_traversal(a, 5);
+
     tree_create();
 
     return (0);

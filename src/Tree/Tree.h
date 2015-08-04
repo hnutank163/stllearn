@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <functional>
 #include <vector>
+#include <stack>
 using namespace std;
 
 template< class Object>
@@ -40,7 +41,7 @@ private:
     TreeNode *root;
 };
 
-
+inline static void swap(void *&p, void *&q);
 template <class Object>
 class BinaryTree
 {
@@ -265,8 +266,56 @@ public:
         }
     }
 
+    void invert_BinaryTree()
+    {
+        _invert_BinaryTree(this->root);
+    }
+
+    void _invert_BinaryTree(BinaryNode * root)
+    {
+        if(root==NULL)
+            return;
+
+        stack <BinaryNode *> st;
+        st.push(root);
+
+        while( !st.empty() )
+        {
+             BinaryNode * node = st.top();
+             st.pop();
+             swap(node->lchild, node->rchild);
+             if( node->lchild )
+                 st.push(node->lchild);
+             if( node->rchild )
+                 st.push(node->rchild);
+        }
+    }
+
+    void invert_BinaryTree_Recur()
+    {
+        _invert_BinaryTree_Recur(this->root);
+    }
+
+    void _invert_BinaryTree_Recur(BinaryNode *root)
+    {
+        if( root == NULL )
+            return;
+
+        swap(root->lchild, root->rchild);
+        _invert_BinaryTree_Recur(root->lchild);
+        _invert_BinaryTree_Recur(root->rchild);
+    }
+
 private:
     BinaryNode *root;
 };
+
+
+inline static void swap(void *&p, void *&q)
+{
+     void *tmp = p;
+     p = q;
+     q = tmp;
+}
 
 #endif
