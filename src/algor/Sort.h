@@ -13,4 +13,7 @@ void quick_sort(Iterator begin, Iterator end);
 template< class Iterator>
 void merge_sort(Iterator begin, Iterator end);
 
+template<class Iterator>
+void shell_sort(Iterator begin, Iterator end);
+
 #endif
