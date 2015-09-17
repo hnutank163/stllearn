@@ -1,55 +1,113 @@
+#include "gtest/gtest.h"
 #include "Sort.cpp"
-#include <iostream>
-#include <vector>
-#include <cstdlib>
-#include <time.h>
+#include <string>
+#include <math.h>
+
 using namespace std;
+using namespace testing;
 
-template<class Contains>
-void print_contains(Contains & con)
+template<class T>
+struct spara
 {
-    typename Contains::iterator iter = con.begin();
-    while( iter != con.end() )
-    {
-        cout<<*iter++<<" ";
-    }
-    cout<<endl;
+	spara(T _begin=NULL, T _end =NULL) :begin(_begin), end(_end) {}
+	~spara()
+	{
+		//cout << "enter " << __FUNCTION__ << endl;
+		delete []begin;
+		//cout << "leave " << __FUNCTION__ << endl;
+	}
+	T begin;
+	T end;
+};
+
+
+
+class SortTest :public testing::Test {
+public:
+	int * randomArray(int *n)
+	{
+		srand(++seed);
+		*n = rand() % 10 + 10;
+		int *a = new int[*n];
+		for (int i = 0; i < *n; ++i)
+		{
+			a[i] = rand() % 30;
+		}
+		return a;
+	}
+	virtual void SetUp()
+	{
+	//	cout << "enter " << __FUNCTION__ << endl;
+		int n = 0;
+		int *a = randomArray(&n);
+		share = new spara<int *>(a, a + n);
+	}
+
+	virtual void TearDown()
+	{
+		//cout << "enter " << __FUNCTION__ << endl;
+		delete share;
+	}
+	
+	~SortTest()
+	{
+		
+	}
+	spara< int *>  *share;
+	static unsigned int seed;
+};
+
+unsigned int SortTest::seed = 0;
+
+template<class Iterator>
+void test_sort(string sort_name, Iterator begin, Iterator end)
+{
+	int n = end - begin;
+	cout << "sort type " << sort_name << endl;
+	for (Iterator it = begin; it != end; ++it)
+		cout << *it << " ";
+	cout << endl;
+	if (sort_name == "bubble")
+		bubble_sort(begin, end);
+	else if (sort_name == "quick")
+		quick_sort(begin, end);
+	else if (sort_name == "merge")
+		merge_sort(begin, end);
+	else if (sort_name == "insert")
+		insert_sort(begin, end);
+	for (Iterator it = begin; it != end-1; ++it)
+	{
+		EXPECT_LE(*it, *(it + 1));
+	}
 }
 
-void test_sort(char *num, string name)
+TEST_F(SortTest, bubblesort)
 {
-    clock_t begin;
-    vector<int> vi;
-    int size = atoi(num);
-    srand(time(NULL));
-    for(int i=0 ;i<size; i++)
-    {
-        vi.push_back(rand()%size);
-    }
-    begin = clock();
-    if(name=="bubble")
-        bubble_sort(vi.begin(), vi.end());
-    else if(name == "quick")
-        quick_sort(vi.begin(),vi.end());
-    else if(name=="shell")
-        shell_sort(vi.begin(), vi.end());
-    else if(name=="merge")
-        merge_sort(vi.begin(), vi.end());
-    else if(name=="insert")
-        insert_sort(vi.begin(), vi.end());
-    clock_t val = clock() - begin;
-    cout<<val/1000<<"ms"<<endl;
+	test_sort("bubble", share->begin, share->end);
 }
 
-int
-main(int argc, char **argv)
+TEST_F(SortTest, buublesort)
 {
-    int a[] = {3,2,0,3,0};
-    int size = sizeof(a) / sizeof(int);
-    quick_sort(a, a+size);
-    for(int i=0; i<size; i++)
-        cout<<a[i]<<" ";
-    cout<<endl;
-    test_sort(argv[1],argv[2]);
-    return 0;
+	test_sort("bubble", share->begin, share->end);
+}
+
+TEST_F(SortTest, quick)
+{
+	test_sort("quick", share->begin, share->end);
+}
+
+class A
+{
+public:
+	int *a;
+	A()
+	{
+		a = new int();
+	}
+};
+
+int main(int argc, char **argv)
+{
+	InitGoogleTest(&argc, argv);
+	RUN_ALL_TESTS();
 }
